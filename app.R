@@ -41,14 +41,19 @@ library(quanteda)
 library(stringr)
 
 # Load the corpus to be searched
-load(file='data/TBBT.corpus.RData', .GlobalEnv)
+load(file='data/BobsBurgers.corpus.RData', .GlobalEnv)
+theShow.corpus <- BobsBurgers.corpus
+#load(file='data/TBBT.corpus.RData', .GlobalEnv)
+#theShow.corpus <- TBBT.corpus
 
 # Define UI for application that will prompt the user
 # for the keyword to search and then display the results
 ui <- fluidPage(
   tags$head(tags$link(rel="stylesheet", type="text/css", href="app.css")),
-  tags$i(titlePanel("The Big Bang Theory Text Search")),
-  textInput(inputId="textToSearch", label="Keyword:", value="Spock"),
+  #tags$i(titlePanel("The Big Bang Theory Text Search")),
+  tags$i(titlePanel("Bobs Burgers")),
+  #textInput(inputId="textToSearch", label="Keyword:", value="Spock"),
+  textInput(inputId="textToSearch", label="Keyword:", value="You poor dumb thing"),
   tableOutput("tableResults")
 )
 
@@ -57,7 +62,7 @@ ui <- fluidPage(
 # results back to the user
 server <- function(input, output) {
   observeEvent(input$textToSearch, {
-    result <- kwic(TBBT.corpus,phrase(input$textToSearch),window=15)
+    result <- kwic(theShow.corpus,phrase(input$textToSearch),window=15)
     if (length(result)>1) {
       odf <- data.frame(Episode=result[[1]], KeywordInContext=str_c(result[[4]]," [",result[[5]],"] ",result[[6]]))
       output$tableResults <- renderTable({odf})
