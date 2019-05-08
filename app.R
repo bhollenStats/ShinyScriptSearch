@@ -40,20 +40,18 @@ library(shiny)
 library(quanteda)
 library(stringr)
 
-# Load the corpus to be searched
-load(file='data/BobsBurgers.corpus.RData', .GlobalEnv)
-theShow.corpus <- BobsBurgers.corpus
-#load(file='data/TBBT.corpus.RData', .GlobalEnv)
-#theShow.corpus <- TBBT.corpus
+# Load the corpus to be searched, by default the first in the list below
+#load(file='data/BobsBurgers.corpus.RData', .GlobalEnv)
+#theShow.corpus <- BobsBurgers.corpus
+load(file='data/TBBT.corpus.RData', .GlobalEnv)
+theShow.corpus <- TBBT.corpus
 
 # Define UI for application that will prompt the user
 # for the keyword to search and then display the results
 ui <- fluidPage(
   tags$head(tags$link(rel="stylesheet", type="text/css", href="app.css")),
-  #tags$i(titlePanel("The Big Bang Theory Text Search")),
-  tags$i(titlePanel("Bobs Burgers")),
-  #textInput(inputId="textToSearch", label="Keyword:", value="Spock"),
-  textInput(inputId="textToSearch", label="Keyword:", value="You poor dumb thing"),
+  selectInput(inputId="corpusToSearch", label="Select corpus to search:", choices=c("The Big Bang Theory","Bob's Burgers"), selected="The Big Bang Theory", multiple=FALSE, width="50%"),
+  textInput(inputId="textToSearch", label="Keyword:", value="Spock"),
   tableOutput("tableResults")
 )
 
@@ -68,6 +66,17 @@ server <- function(input, output) {
       output$tableResults <- renderTable({odf})
     } else {
       output$tableResults <- renderTable({data.frame(Episode="---", KeywordInContext="Nothing found")})
+    }
+  })
+  observeEvent(input$corpusToSearch, {
+    if (input$corpusToSearch == "The Big Bang Theory") {
+      load(file='data/TBBT.corpus.RData', .GlobalEnv)
+      theShow.corpus <- TBBT.corpus
+    } else if (input$corpusToSearch == "Bob's Burgers") {
+      load(file='data/BobsBurgers.corpus.RData', .GlobalEnv)
+      theShow.corpus <- BobsBurgers.corpus
+    } else {
+      print("Undefined")
     }
   })
 }
