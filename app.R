@@ -40,18 +40,12 @@ library(shiny)
 library(quanteda)
 library(stringr)
 
-# Load the corpus to be searched, by default the first in the list below
-#load(file='data/BobsBurgers.corpus.RData', .GlobalEnv)
-#theShow.corpus <- BobsBurgers.corpus
-load(file='data/TBBT.corpus.RData', .GlobalEnv)
-theShow.corpus <- TBBT.corpus
-
 # Define UI for application that will prompt the user
 # for the keyword to search and then display the results
 ui <- fluidPage(
   tags$head(tags$link(rel="stylesheet", type="text/css", href="app.css")),
   selectInput(inputId="corpusToSearch", label="Select corpus to search:", choices=c("The Big Bang Theory","Bob's Burgers"), selected="The Big Bang Theory", multiple=FALSE, width="50%"),
-  textInput(inputId="textToSearch", label="Keyword:", value="Spock"),
+  textInput(inputId="textToSearch", label="Keyword:", value="beef"),
   tableOutput("tableResults")
 )
 
@@ -59,7 +53,12 @@ ui <- fluidPage(
 # keyword to search and then to search with kwic() to rdeport the
 # results back to the user
 server <- function(input, output) {
+  load(file='data/TBBT.corpus.RData')
+  load(file='data/BobsBurgers.corpus.RData')
+  theShow.corpus <- TBBT.corpus
   observeEvent(input$textToSearch, {
+    #print(str_c("Searching through corpus for ", input$textToSearch))
+    #print(theShow.corpus)
     result <- kwic(theShow.corpus,phrase(input$textToSearch),window=15)
     if (length(result)>1) {
       odf <- data.frame(Episode=result[[1]], KeywordInContext=str_c(result[[4]]," [",result[[5]],"] ",result[[6]]))
@@ -70,11 +69,13 @@ server <- function(input, output) {
   })
   observeEvent(input$corpusToSearch, {
     if (input$corpusToSearch == "The Big Bang Theory") {
-      load(file='data/TBBT.corpus.RData', .GlobalEnv)
-      theShow.corpus <- TBBT.corpus
+      theShow.corpus <<- TBBT.corpus
+      #print("Switched to TBBT.corpus")
+      #print(theShow.corpus)
     } else if (input$corpusToSearch == "Bob's Burgers") {
-      load(file='data/BobsBurgers.corpus.RData', .GlobalEnv)
-      theShow.corpus <- BobsBurgers.corpus
+      theShow.corpus <<- BobsBurgers.corpus
+      #print("Switched to BobsBurgers.corpus")
+      #print(theShow.corpus)
     } else {
       print("Undefined")
     }
