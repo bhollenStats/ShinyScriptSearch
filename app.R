@@ -40,18 +40,12 @@ library(shiny)
 library(quanteda)
 library(stringr)
 
-# Load the corpus to be searched, by default the first in the list below
-#load(file='data/BobsBurgers.corpus.RData', .GlobalEnv)
-#theShow.corpus <- BobsBurgers.corpus
-load(file='data/TBBT.corpus.RData', .GlobalEnv)
-theShow.corpus <- TBBT.corpus
-
 # Define UI for application that will prompt the user
 # for the keyword to search and then display the results
 ui <- fluidPage(
   tags$head(tags$link(rel="stylesheet", type="text/css", href="app.css")),
-  selectInput(inputId="corpusToSearch", label="Select corpus to search:", choices=c("The Big Bang Theory","Bob's Burgers"), selected="The Big Bang Theory", multiple=FALSE, width="50%"),
-  textInput(inputId="textToSearch", label="Keyword:", value="Spock"),
+  selectInput(inputId="corpusToSearch", label="Select corpus to search:", choices=c("Game of Thrones", "The Big Bang Theory","Bob's Burgers"), selected="Game of Thrones", multiple=FALSE, width="50%"),
+  textInput(inputId="textToSearch", label="Keyword:", value="bastard"),
   tableOutput("tableResults")
 )
 
@@ -59,6 +53,10 @@ ui <- fluidPage(
 # keyword to search and then to search with kwic() to rdeport the
 # results back to the user
 server <- function(input, output) {
+  load(file='data/TBBT.corpus.RData')
+  load(file='data/BobsBurgers.corpus.RData')
+  load(file='data/GOT.corpus.RData')
+  theShow.corpus <- GOT.corpus
   observeEvent(input$textToSearch, {
     try({result <- kwic(theShow.corpus,phrase(input$textToSearch),window=15)}, silent = TRUE)
     try({
@@ -71,11 +69,17 @@ server <- function(input, output) {
   })
   observeEvent(input$corpusToSearch, {
     if (input$corpusToSearch == "The Big Bang Theory") {
-      load(file='data/TBBT.corpus.RData', .GlobalEnv)
-      theShow.corpus <- TBBT.corpus
+      theShow.corpus <<- TBBT.corpus
+      #print("Switched to TBBT.corpus")
+      #print(theShow.corpus)
     } else if (input$corpusToSearch == "Bob's Burgers") {
-      load(file='data/BobsBurgers.corpus.RData', .GlobalEnv)
-      theShow.corpus <- BobsBurgers.corpus
+      theShow.corpus <<- BobsBurgers.corpus
+      #print("Switched to BobsBurgers.corpus")
+      #print(theShow.corpus)
+    } else if (input$corpusToSearch == "Game of Thrones") {
+      theShow.corpus <<- GOT.corpus
+      #print("Switched to GOT.corpus")
+      #print(theShow.corpus)
     } else {
       print("Undefined")
     }
