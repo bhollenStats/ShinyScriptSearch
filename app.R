@@ -60,13 +60,14 @@ ui <- fluidPage(
 # results back to the user
 server <- function(input, output) {
   observeEvent(input$textToSearch, {
-    result <- kwic(theShow.corpus,phrase(input$textToSearch),window=15)
-    if (length(result)>1) {
-      odf <- data.frame(Episode=result[[1]], KeywordInContext=str_c(result[[4]]," [",result[[5]],"] ",result[[6]]))
-      output$tableResults <- renderTable({odf})
-    } else {
-      output$tableResults <- renderTable({data.frame(Episode="---", KeywordInContext="Nothing found")})
-    }
+    try({result <- kwic(theShow.corpus,phrase(input$textToSearch),window=15)}, silent = TRUE)
+    try({
+      if (length(result)>1) {
+        odf <- data.frame(Episode=result[[1]], KeywordInContext=str_c(result[[4]]," [",result[[5]],"] ",result[[6]]))
+        output$tableResults <- renderTable({odf})
+      } else {
+        output$tableResults <- renderTable({data.frame(Episode="---", KeywordInContext="Nothing found")})
+      }}, silent = TRUE)
   })
   observeEvent(input$corpusToSearch, {
     if (input$corpusToSearch == "The Big Bang Theory") {
