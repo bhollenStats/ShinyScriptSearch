@@ -70,16 +70,10 @@ server <- function(input, output) {
   observeEvent(input$corpusToSearch, {
     if (input$corpusToSearch == "The Big Bang Theory") {
       theShow.corpus <<- TBBT.corpus
-      #print("Switched to TBBT.corpus")
-      #print(theShow.corpus)
     } else if (input$corpusToSearch == "Bob's Burgers") {
       theShow.corpus <<- BobsBurgers.corpus
-      #print("Switched to BobsBurgers.corpus")
-      #print(theShow.corpus)
     } else if (input$corpusToSearch == "Game of Thrones") {
       theShow.corpus <<- GOT.corpus
-      #print("Switched to GOT.corpus")
-      #print(theShow.corpus)
     } else {
       print("Undefined")
     }
