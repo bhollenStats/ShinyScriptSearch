@@ -1,0 +1,12 @@
+name: ShinyScriptSearch
+title: ShinyScriptSearch
+username:
+account: bhollenstats
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 2242209
+bundleId: 3103983
+url: https://bhollenstats.shinyapps.io/ShinyScriptSearch/
+when: 1588639227.04205
+asMultiple: FALSE
+asStatic: FALSE

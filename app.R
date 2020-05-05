@@ -44,8 +44,9 @@ library(stringr)
 # for the keyword to search and then display the results
 ui <- fluidPage(
   tags$head(tags$link(rel="stylesheet", type="text/css", href="app.css")),
-  selectInput(inputId="corpusToSearch", label="Select corpus to search:", choices=c("Game of Thrones", "The Big Bang Theory","Bob's Burgers"), selected="Game of Thrones", multiple=FALSE, width="50%"),
-  textInput(inputId="textToSearch", label="Keyword:", value="bastard"),
+  titlePanel("Shiny Script Search"),
+  selectInput(inputId="corpusToSearch", label="Select corpus to search:", choices=c("Game of Thrones", "The Big Bang Theory","Bob's Burgers"), selected="The Big Bang Theory", multiple=FALSE, width="50%"),
+  textInput(inputId="textToSearch", label="Keyword:", value="Professor Proton"),
   tableOutput("tableResults")
 )
 
@@ -56,7 +57,7 @@ server <- function(input, output) {
   load(file='data/TBBT.corpus.RData')
   load(file='data/BobsBurgers.corpus.RData')
   load(file='data/GOT.corpus.RData')
-  theShow.corpus <- GOT.corpus
+  theShow.corpus <- TBBT.corpus
   observeEvent(input$textToSearch, {
     try({result <- kwic(theShow.corpus,phrase(input$textToSearch),window=15)}, silent = TRUE)
     try({
