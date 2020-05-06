@@ -44,6 +44,7 @@ library(stringr)
 # for the keyword to search and then display the results
 ui <- fluidPage(
   tags$head(tags$link(rel="stylesheet", type="text/css", href="app.css")),
+  imageOutput(outputId = 'showBanner', inline = TRUE),
   titlePanel("Shiny Script Search"),
   selectInput(inputId="corpusToSearch", label="Select corpus to search:", choices=c("Game of Thrones", "The Big Bang Theory","Bob's Burgers"), selected="The Big Bang Theory", multiple=FALSE, width="50%"),
   textInput(inputId="textToSearch", label="Keyword:", value="Professor Proton"),
@@ -58,6 +59,9 @@ server <- function(input, output) {
   load(file='data/BobsBurgers.corpus.RData')
   load(file='data/GOT.corpus.RData')
   theShow.corpus <- TBBT.corpus
+  output$showBanner <- renderImage({
+    list(src = './www/tbbt.jpg')
+  }, deleteFile = FALSE)
   observeEvent(input$textToSearch, {
     try({result <- kwic(theShow.corpus,phrase(input$textToSearch),window=15)}, silent = TRUE)
     try({
@@ -71,10 +75,19 @@ server <- function(input, output) {
   observeEvent(input$corpusToSearch, {
     if (input$corpusToSearch == "The Big Bang Theory") {
       theShow.corpus <<- TBBT.corpus
+      output$showBanner <- renderImage({
+        list(src = './www/tbbt.jpg')
+      }, deleteFile = FALSE)
     } else if (input$corpusToSearch == "Bob's Burgers") {
       theShow.corpus <<- BobsBurgers.corpus
+      output$showBanner <- renderImage({
+        list(src = './www/bb.jpeg')
+      }, deleteFile = FALSE)
     } else if (input$corpusToSearch == "Game of Thrones") {
       theShow.corpus <<- GOT.corpus
+      output$showBanner <- renderImage({
+        list(src = './www/got.png')
+      }, deleteFile = FALSE)
     } else {
       print("Undefined")
     }
